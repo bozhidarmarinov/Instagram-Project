@@ -1,7 +1,7 @@
 package Instagram_Project;
 
 public class Comment extends Feature{
-
+	
 	@Override
 	public void add() {
 		// TODO Auto-generated method stub
