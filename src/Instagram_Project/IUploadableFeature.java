@@ -4,6 +4,6 @@ public interface IUploadableFeature extends IFeature{
 	//ako imame vreme 
 	//public void download();
 	
-	public void rename();
+	public void rename(String descriptio);
 	public void tag();
 }

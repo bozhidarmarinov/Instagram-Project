@@ -9,11 +9,7 @@ public class Video extends UploadableFeature {
 //		
 //	}
 
-	@Override
-	public void rename() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public void tag() {

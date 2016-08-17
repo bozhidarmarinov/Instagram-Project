@@ -11,12 +11,6 @@ public class Photo extends UploadableFeature{
 //	}
 
 	@Override
-	public void rename() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void tag() {
 		// TODO Auto-generated method stub
 		
