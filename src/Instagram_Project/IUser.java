@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface IUser {
 
-	void uploadPicture();
+	void uploadFeature(UploadableFeature feature);
 
 	void showProfile();
 

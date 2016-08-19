@@ -2,15 +2,13 @@ package Instagram_Project;
 
 public class Comment extends Feature{
 	
+	
+	
 	@Override
-	public void add() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
+	public void add(Comment comment,UploadableFeature feature) {
+		if (feature!=null) {
+			feature.comments.add(comment);
+		}
 		
 	}
 

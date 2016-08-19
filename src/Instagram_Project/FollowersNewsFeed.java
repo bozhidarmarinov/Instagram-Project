@@ -3,13 +3,7 @@ package Instagram_Project;
 public class FollowersNewsFeed extends NewsFeed{
 
 	@Override
-	public void add() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete() {
+	public void add(Comment comment,UploadableFeature feature) {
 		// TODO Auto-generated method stub
 		
 	}

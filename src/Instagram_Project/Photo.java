@@ -16,17 +16,6 @@ public class Photo extends UploadableFeature{
 		
 	}
 
-	@Override
-	public void add() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void share() {
@@ -42,6 +31,12 @@ public class Photo extends UploadableFeature{
 
 	@Override
 	public void unlike() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void add(Comment comment, UploadableFeature feature) {
 		// TODO Auto-generated method stub
 		
 	}

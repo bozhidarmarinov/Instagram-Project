@@ -18,16 +18,11 @@ public class Video extends UploadableFeature {
 	}
 
 	@Override
-	public void add() {
+	public void add(Comment comment,UploadableFeature feature) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void delete() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void share() {

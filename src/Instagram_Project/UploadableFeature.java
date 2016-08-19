@@ -1,5 +1,7 @@
 package Instagram_Project;
 
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -9,10 +11,11 @@ public abstract class UploadableFeature implements IUploadableFeature {
 	// private String name; // ako ne ni posluji, da iztriem
 	private String description;
 	private int numberOfLikes;
-	private User owner;
+	private IUser owner;
 	private String city;
-	private Set<User> commenters;
-	private Set<User> likers;
+	protected Set<User> commenters;
+	protected Set<User> likers;
+	protected List<Comment> comments=new LinkedList<Comment>();
 
 	@Override
 	public void rename(String description) {
