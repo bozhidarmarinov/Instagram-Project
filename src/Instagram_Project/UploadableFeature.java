@@ -15,7 +15,18 @@ public abstract class UploadableFeature implements IUploadableFeature {
 	private String city;
 	protected Set<User> commenters;
 	protected Set<User> likers;
-	protected List<Comment> comments=new LinkedList<Comment>();
+	protected List<Comment> comments = new LinkedList<Comment>();
+
+	public UploadableFeature(String description) {
+		if (description != null && !description.equals("")) {
+			this.description = description;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return  description;
+	}
 
 	@Override
 	public void rename(String description) {

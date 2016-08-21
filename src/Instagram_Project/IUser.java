@@ -1,5 +1,6 @@
 package Instagram_Project;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 public interface IUser {
@@ -22,12 +23,12 @@ public interface IUser {
 
 	void unlike(UploadableFeature feature);
 
-	void follow(IUser user);
+	void follow(User user) throws NoValidDataException;
 
-	void unfollow(IUser user);
+	void unfollow(User user) throws NoValidDataException;
 
-	void shareFeature();
+	void shareFeature() throws MalformedURLException;
 
-	void renameFeatureDescription(UploadableFeature feature, String description);
+	void renameFeatureDescription(UploadableFeature feature, String description) throws NoValidDataException;
 
 }

@@ -10,6 +10,11 @@ public class Photo extends UploadableFeature{
 //		
 //	}
 
+	public Photo(String description) {
+		super(description);
+	}
+
+
 	@Override
 	public void tag() {
 		// TODO Auto-generated method stub
@@ -40,5 +45,8 @@ public class Photo extends UploadableFeature{
 		// TODO Auto-generated method stub
 		
 	}
+
+
+
 
 }

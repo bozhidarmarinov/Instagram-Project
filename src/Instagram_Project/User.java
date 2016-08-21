@@ -1,15 +1,17 @@
 package Instagram_Project;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
 
 public class User implements IUser {
 
 	private Photo photo;
-	private Set<Video> videos;
-	private Set<Photo> photos;
-	private Set<User> weFollow;
-	private Set<User> theyFollow;
+	private Set<Video> videos = new HashSet<Video>();
+	private Set<Photo> photos = new HashSet<Photo>();
+	private Set<User> weFollow = new HashSet<User>();
+	private Set<User> theyFollow = new HashSet<User>();
 	private Set<FollowersNewsFeed> newFeeds = new LinkedHashSet<FollowersNewsFeed>();
 	private boolean isLiked = false;
 	private String userName;
@@ -18,8 +20,12 @@ public class User implements IUser {
 	private String email;
 	private String name;
 	private Gender gender;
+	private boolean isRegistered = false;
 
-	protected static Set<User> registeredUsers = new HashSet<User>();
+	// map username-->password
+	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
+	protected static Set<User> registeredUsers = Collections.synchronizedSet(new HashSet<User>());
+	protected static Set<User> loginUsers = Collections.synchronizedSet(new HashSet<User>());
 
 	public User(String userName, String password, String email) throws NoValidDataException {
 		this(userName, password);
@@ -41,10 +47,13 @@ public class User implements IUser {
 	}
 
 	public void registerUser() throws NoValidDataException {
+
 		if (registeredUsers.contains(this)) {
 			System.out.println("User already registered!Please,try again");
 		} else {
 			registeredUsers.add(this);
+			loginDetails.put(this.userName, this.password);
+			isRegistered = true;
 			System.out.println("Registration successful");
 
 		}
@@ -53,14 +62,13 @@ public class User implements IUser {
 	public boolean isValidEmail(String email) {
 
 		if (email != null && !email.equals("")) {
-			String regexEmail="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$";
-			boolean isMatch=email.matches(regexEmail);
+			String regexEmail = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$";
+			boolean isMatch = email.matches(regexEmail);
 			return isMatch;
-			
-		}else {
+
+		} else {
 			return false;
 		}
-		
 
 	}
 
@@ -71,9 +79,14 @@ public class User implements IUser {
 	 */
 	@Override
 	public void uploadFeature(UploadableFeature feature) {
-		
-		
-
+		if (loginUsers.contains(this) && feature != null) {
+			if (feature instanceof Photo) {
+				photos.add((Photo) feature);
+			}
+			if (feature instanceof Video) {
+				videos.add((Video) feature);
+			}
+		}
 	}
 
 	/*
@@ -83,17 +96,22 @@ public class User implements IUser {
 	 */
 	@Override
 	public void showProfile() {
-		for (IUser weFollows : weFollow) {
-			System.out.println(weFollows);
+		
+		System.out.println("I follow:");
+		for (User weFollows : weFollow) {
+			System.out.print("\t"+weFollows+" ");
 		}
-		for (IUser theyFollows : theyFollow) {
-			System.out.println(theyFollows);
+		System.out.println("\nMy followers are:");
+		for (User theyFollows : theyFollow) {
+			System.out.print("\t"+theyFollows +" ");
 		}
+		System.out.println("\nMy photos");
 		for (Photo photo : photos) {
-			System.out.println(photo);
+			System.out.print("\t"+photo+" ");
 		}
+		System.out.println("\nMy videos\n");
 		for (Video video : videos) {
-			System.out.println(video);
+			System.out.println("\t"+video+" ");
 		}
 	}
 
@@ -154,57 +172,68 @@ public class User implements IUser {
 	 */
 	@Override
 	public void login(String name, String password) {
-		for (User user : registeredUsers) {
-			if ((name.equals(user.userName) && password.equals(user.password))) {
+		if (name != null && !name.equals("") && password != null && !password.equals("")) {
+			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
+				loginUsers.add(this);
 				if (!newFeeds.isEmpty()) {
 					for (FollowersNewsFeed f : newFeeds) {
 						System.out.println(f);
 					}
-				}else{
-					System.out.println("NO available newfeeds");
-				}
-				
-			} else {
-				if (!name.equals(user.userName)) {
-					System.out.println("Invalid name");
 				} else {
-					if (!name.equals(user.password)) {
+					System.out.println("NO available newsfeed");
+				}
+			} else {
+				if (!isRegistered) {
+					System.out.println("This is not a registered user");
+				} else {
+					if (!loginDetails.containsKey(name)) {
+						System.out.println("Invalid user name");
+					} else {
 						System.out.println("Invalid password");
 					}
 				}
+
 			}
 		}
 	}
 
+	// for (User user : registeredUsers) {
+	// if ((name.equals(user.userName) && password.equals(user.password))) {
+	// loginUsers.add(this);
+	// if (!newFeeds.isEmpty()) {
+	// for (FollowersNewsFeed f : newFeeds) {
+	// System.out.println(f);
+	// }
+	// } else {
+	// System.out.println("NO available newfeeds");
+	// }
+	//
+	// } else {
+	// if (!name.equals(user.userName)) {
+	// System.out.println("Invalid name");
+	// } else {
+	// if (!name.equals(user.password)) {
+	// System.out.println("Invalid password");
+	// }
+	// }
+	// }
+	// }
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
-		return result;
+		return (this.email.hashCode()) * (this.userName.hashCode());
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+		if (obj != null && this != null) {
+			User user = (User) obj;
+			return this.email.equals(user.email) && this.userName.equals(user.userName);
+
+		} else {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (userName == null) {
-			if (other.userName != null)
-				return false;
-		} else if (!userName.equals(other.userName))
-			return false;
-		return true;
+		}
+
 	}
 
 	/*
@@ -214,7 +243,13 @@ public class User implements IUser {
 	 */
 	@Override
 	public void logOut() {
-		System.out.println("Home page");
+		if (loginUsers.contains(this)) {
+			loginUsers.remove(this);
+			System.out.println("Home page");
+		} else {
+			System.out.println("You are not logged on!");
+		}
+
 	}
 
 	// public void download(){
@@ -228,7 +263,7 @@ public class User implements IUser {
 	 */
 	@Override
 	public void like(UploadableFeature feature) {
-		if (feature != null) {
+		if (feature != null && loginUsers.contains(this)) {
 			feature.setNumberOfLikes(feature.getNumberOfLikes() + 1);
 			System.out.println(" Number of Likes : " + feature.getNumberOfLikes());
 			isLiked = true;
@@ -242,12 +277,12 @@ public class User implements IUser {
 	 */
 	@Override
 	public void unlike(UploadableFeature feature) {
-		if (feature != null) {
+		if (feature != null && loginUsers.contains(this)) {
 			if (isLiked == true) {
 				feature.setNumberOfLikes(feature.getNumberOfLikes() - 1);
 				System.out.println(" Number of Likes : " + feature.getNumberOfLikes());
 			} else {
-				System.out.println("Snimkata ne e haresana");
+				System.out.println("You unlike this photo");
 			}
 		}
 	}
@@ -258,24 +293,31 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#follow(Instagram_Project.User)
 	 */
 	@Override
-	public void follow(IUser user) {
-		for (IUser follower : weFollow) {
+	public void follow(User user) throws NoValidDataException {
+		if (user != null && user.isRegistered == true) {
 			if (weFollow.contains(user)) {
 				System.out.println("You already follow this person");
 			} else {
-				weFollow.add((User) user);
+				weFollow.add(user);
+				user.theyFollow.add(this);
 			}
+		}else {
+			throw new NoValidDataException("Provide a valid or registered user");
 		}
+
 	}
 
 	@Override
-	public void unfollow(IUser user) {
-		for (IUser follower : weFollow) {
+	public void unfollow(User user) throws NoValidDataException {
+		if (user != null && user.isRegistered == true) {
 			if (weFollow.contains(user)) {
 				weFollow.remove(user);
+				user.theyFollow.remove(this);
 			} else {
 				System.out.println("You do not follow this person");
 			}
+		}else {
+			throw new NoValidDataException("Provide a valid or registered user");
 		}
 	}
 
@@ -285,7 +327,8 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#shareFeature()
 	 */
 	@Override
-	public void shareFeature() {
+	public void shareFeature() throws MalformedURLException {
+		URL featureURL = new URL("This will be a real photo or video url");
 
 	}
 
@@ -296,8 +339,26 @@ public class User implements IUser {
 	 * UploadableFeature, java.lang.String)
 	 */
 	@Override
-	public void renameFeatureDescription(UploadableFeature feature, String description) {
-		feature.rename(description);
+	public void renameFeatureDescription(UploadableFeature feature, String description) throws NoValidDataException {
+		if (feature != null) {
+			feature.rename(description);
+		} else {
+			throw new NoValidDataException("This photo/video does not exist");
+		}
+
 	}
+
+	public void showRegistredUsers() {
+		for (User user : registeredUsers) {
+			System.out.println(user);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return userName ;
+	}
+
+
 
 }
