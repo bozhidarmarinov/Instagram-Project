@@ -8,12 +8,12 @@ import java.util.regex.*;
 public class User implements IUser {
 
 	private Photo photo;
+	private Comment comment;
 	private Set<Video> videos = new HashSet<Video>();
 	private Set<Photo> photos = new HashSet<Photo>();
 	private Set<User> weFollow = new HashSet<User>();
 	private Set<User> theyFollow = new HashSet<User>();
 	private Set<FollowersNewsFeed> newFeeds = new LinkedHashSet<FollowersNewsFeed>();
-	private boolean isLiked = false;
 	private String userName;
 	private String password;
 	private String biography;
@@ -21,6 +21,7 @@ public class User implements IUser {
 	private String name;
 	private Gender gender;
 	private boolean isRegistered = false;
+	
 
 	// map username-->password
 	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
@@ -96,22 +97,23 @@ public class User implements IUser {
 	 */
 	@Override
 	public void showProfile() {
-		
+
 		System.out.println("I follow:");
 		for (User weFollows : weFollow) {
-			System.out.print("\t"+weFollows+" ");
+			System.out.print("\t" + weFollows + " ");
 		}
 		System.out.println("\nMy followers are:");
 		for (User theyFollows : theyFollow) {
-			System.out.print("\t"+theyFollows +" ");
+			System.out.print("\t" + theyFollows + " ");
 		}
 		System.out.println("\nMy photos");
 		for (Photo photo : photos) {
-			System.out.print("\t"+photo+" ");
+			System.out.print("\t" + photo + " ");
+			System.out.println(photo.getComments());
 		}
 		System.out.println("\nMy videos\n");
 		for (Video video : videos) {
-			System.out.println("\t"+video+" ");
+			System.out.println("\t" + video + " ");
 		}
 	}
 
@@ -262,11 +264,15 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#like(Instagram_Project.UploadableFeature)
 	 */
 	@Override
-	public void like(UploadableFeature feature) {
-		if (feature != null && loginUsers.contains(this)) {
-			feature.setNumberOfLikes(feature.getNumberOfLikes() + 1);
-			System.out.println(" Number of Likes : " + feature.getNumberOfLikes());
-			isLiked = true;
+	public void like(UploadableFeature feature) throws NoValidDataException {
+		try {
+			if (feature != null && loginUsers.contains(this)) {
+				feature.like(feature);
+			} else {
+				throw new NoValidDataException("You are not login and you cannot like");
+			}
+		} catch (Exception e) {
+			System.out.println("You are not login and you cannot like");
 		}
 	}
 
@@ -278,12 +284,7 @@ public class User implements IUser {
 	@Override
 	public void unlike(UploadableFeature feature) {
 		if (feature != null && loginUsers.contains(this)) {
-			if (isLiked == true) {
-				feature.setNumberOfLikes(feature.getNumberOfLikes() - 1);
-				System.out.println(" Number of Likes : " + feature.getNumberOfLikes());
-			} else {
-				System.out.println("You unlike this photo");
-			}
+			feature.unlike(feature);
 		}
 	}
 
@@ -301,7 +302,7 @@ public class User implements IUser {
 				weFollow.add(user);
 				user.theyFollow.add(this);
 			}
-		}else {
+		} else {
 			throw new NoValidDataException("Provide a valid or registered user");
 		}
 
@@ -316,7 +317,7 @@ public class User implements IUser {
 			} else {
 				System.out.println("You do not follow this person");
 			}
-		}else {
+		} else {
 			throw new NoValidDataException("Provide a valid or registered user");
 		}
 	}
@@ -354,11 +355,34 @@ public class User implements IUser {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return userName ;
+	
+	public boolean isRegistered() {
+		return isRegistered;
 	}
 
+	@Override
+	public String toString() {
+		return userName;
+	}
+	
+	
 
+	public Comment addComment(UploadableFeature feature, String comment1) throws NoValidDataException {
+		if (!(feature != null && comment1 != null && !comment1.equals(""))) {
+			throw new NoValidDataException("Invalid posting of coment");
+		}
+		return feature.add(comment1, feature);
+
+	}
+	public void tagPerson(User user, UploadableFeature feature) {
+		try {
+			feature.tag(user);
+		} catch (NoValidDataException e) {
+			System.out.println("This user cannot be tag");
+		}
+	}
+	
+	// TODO public void editProfile(){
+		
 
 }

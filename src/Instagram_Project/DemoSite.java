@@ -51,14 +51,33 @@ public class DemoSite {
 		System.out.println("FOLLOW:");
 		profile1.follow(profile3);
 		profile1.follow(profile4);
-		
-		//follow me
+
+		// follow me
 		System.out.println("FOLLOW ME:");
 		profile4.follow(profile1);
 
+		
 		// show profile
 		System.out.println("SHOW PROFILE");
 		profile1.showProfile();
+		profile1.like(photo1);
+		System.out.println(photo1.getNumberOfLikes());
+		profile1.unlike(photo1);
+		System.out.println(photo1.getNumberOfLikes());
+		profile3.login("pesho", "abc");
+		profile3.like(photo1);
+		
+		profile4.login("ani", "abc");
+		profile4.like(photo1);
+		
+		// addComment
+				profile1.addComment(photo1, "Az sum snimka");
+				profile1.showProfile();
+				profile4.logOut();
+				profile1.tagPerson(profile3, photo1);
+				profile1.tagPerson(profile2, photo1);
+				profile1.tagPerson(profile4, photo1);
+				System.out.println(photo1);
 
 	}
 }

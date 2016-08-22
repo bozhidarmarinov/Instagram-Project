@@ -5,5 +5,5 @@ public interface IUploadableFeature extends IFeature{
 	//public void download();
 	
 	public void rename(String descriptio)throws NoValidDataException;
-	public void tag();
+	public void tag(User user) throws NoValidDataException;
 }

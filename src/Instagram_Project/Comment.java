@@ -1,33 +1,22 @@
 package Instagram_Project;
 
-public class Comment extends Feature{
+public class Comment {
+
+	private String comment;
+	private UploadableFeature feature;
+
+
+	public Comment(String comment, UploadableFeature feature) {
+		this.comment = comment;
+		this.feature = feature;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Comment [comment=" + comment + ", feature=" + feature + "]";
+	}
+
+
 	
-	
-	
-	@Override
-	public void add(Comment comment,UploadableFeature feature) {
-		if (feature!=null) {
-			feature.comments.add(comment);
-		}
-		
-	}
-
-	@Override
-	public void share() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void like() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unlike() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

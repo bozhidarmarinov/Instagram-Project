@@ -19,7 +19,7 @@ public interface IUser {
 
 	void logOut();
 
-	void like(UploadableFeature feature);
+	void like(UploadableFeature feature) throws NoValidDataException;
 
 	void unlike(UploadableFeature feature);
 
