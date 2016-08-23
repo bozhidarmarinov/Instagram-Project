@@ -13,7 +13,7 @@ public class User implements IUser {
 	private Set<Photo> photos = new HashSet<Photo>();
 	private Set<User> weFollow = new HashSet<User>();
 	private Set<User> theyFollow = new HashSet<User>();
-	private Set<FollowersNewsFeed> newFeeds = new LinkedHashSet<FollowersNewsFeed>();
+	private Set<NewsFeed> newFeeds = new LinkedHashSet<NewsFeed>();
 	private String userName;
 	private String password;
 	private String biography;
@@ -21,7 +21,7 @@ public class User implements IUser {
 	private String name;
 	private Gender gender;
 	private boolean isRegistered = false;
-	
+	private NewsFeed followersNewsFeeds;
 
 	// map username-->password
 	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
@@ -86,6 +86,9 @@ public class User implements IUser {
 			}
 			if (feature instanceof Video) {
 				videos.add((Video) feature);
+			}
+			for (User followers : theyFollow) {
+				followers.followersNewsFeeds.addedToNewsFeed(feature);
 			}
 		}
 	}
@@ -178,7 +181,7 @@ public class User implements IUser {
 			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
 				loginUsers.add(this);
 				if (!newFeeds.isEmpty()) {
-					for (FollowersNewsFeed f : newFeeds) {
+					for (NewsFeed f : newFeeds) {
 						System.out.println(f);
 					}
 				} else {
@@ -355,7 +358,6 @@ public class User implements IUser {
 		}
 	}
 
-	
 	public boolean isRegistered() {
 		return isRegistered;
 	}
@@ -364,8 +366,6 @@ public class User implements IUser {
 	public String toString() {
 		return userName;
 	}
-	
-	
 
 	public Comment addComment(UploadableFeature feature, String comment1) throws NoValidDataException {
 		if (!(feature != null && comment1 != null && !comment1.equals(""))) {
@@ -374,6 +374,7 @@ public class User implements IUser {
 		return feature.add(comment1, feature);
 
 	}
+
 	public void tagPerson(User user, UploadableFeature feature) {
 		try {
 			feature.tag(user);
@@ -381,8 +382,15 @@ public class User implements IUser {
 			System.out.println("This user cannot be tag");
 		}
 	}
-	
+
+	public Set<Video> getVideos() {
+		return videos;
+	}
+
+	public Set<Photo> getPhotos() {
+		return photos;
+	}
+
 	// TODO public void editProfile(){
-		
 
 }

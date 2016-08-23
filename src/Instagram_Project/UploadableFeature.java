@@ -12,14 +12,20 @@ public abstract class UploadableFeature implements IUploadableFeature {
 	private Comment comment1;
 	private String description;
 	private static int numberOfLikes;
-	private IUser owner;
+	private User owner;
 	private String city;
+	private boolean isLiked;
 	protected Set<User> commenters;
 	protected Set<User> likers;
 	protected static List<Comment> comments = new LinkedList<Comment>();
-	private boolean isLiked;
 	protected static List<User> taggedUsers = new LinkedList<User>();
 
+	public User getOwner() {
+		return owner;
+	}
+
+	
+	
 	@Override
 	public void tag(User user) throws NoValidDataException {
 		if (user != null && user.isRegistered() == true) {
@@ -28,7 +34,6 @@ public abstract class UploadableFeature implements IUploadableFeature {
 			throw new NoValidDataException("This user cannot be tag");
 		}
 	}
-	
 
 	@Override
 	public void like(UploadableFeature feature) {
