@@ -86,13 +86,27 @@ public class DemoSite {
 		profile1.registerUser();
 		profile2.registerUser();
 		profile1.login("georgi", "123");
-		Photo photo1 = new Photo("On the beach");
-		profile1.uploadFeature(photo1);
-		
+		Photo photo1 = new Photo(profile1,"On the beach");
+
 		profile2.login("georgi2", "123");
 		profile2.follow(profile1);
+		
+		profile2.logOut();
+		profile1.uploadFeature(photo1);
 		profile2.login("georgi2", "123");
-		System.out.println(profile2.);
+		profile2.logOut();
+		profile1.uploadFeature(photo1);
+		profile2.login("georgi2", "123");
+		profile2.addComment(photo1, "Ae chao!");
+		profile2.like(photo1);
+		profile1.showMyNewsFeed();
+		profile2.unlike(photo1);
+		profile1.showMyNewsFeed();
+
+		
+		
+
+		
 
 
 	}

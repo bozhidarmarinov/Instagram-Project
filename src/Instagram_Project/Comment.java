@@ -1,6 +1,6 @@
 package Instagram_Project;
 
-public class Comment {
+public class Comment implements IFeature{
 
 	private String comment;
 	private UploadableFeature feature;

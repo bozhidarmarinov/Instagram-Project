@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-public abstract class UploadableFeature implements IUploadableFeature {
+public abstract class UploadableFeature implements IUploadableFeature, IFeature {
 
 	// private String name; // ako ne ni posluji, da iztriem
 	private Comment comment1;
@@ -26,6 +26,14 @@ public abstract class UploadableFeature implements IUploadableFeature {
 
 	
 	
+	public UploadableFeature(String description, User owner) {
+		super();
+		this.description = description;
+		this.owner = owner;
+	}
+
+
+
 	@Override
 	public void tag(User user) throws NoValidDataException {
 		if (user != null && user.isRegistered() == true) {

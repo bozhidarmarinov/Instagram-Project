@@ -7,21 +7,21 @@ import java.util.regex.*;
 
 public class User implements IUser {
 
-	private Photo photo;
-	private Comment comment;
-	private Set<Video> videos = new HashSet<Video>();
-	private Set<Photo> photos = new HashSet<Photo>();
-	private Set<User> weFollow = new HashSet<User>();
-	private Set<User> theyFollow = new HashSet<User>();
-	private Set<NewsFeed> newFeeds = new LinkedHashSet<NewsFeed>();
 	private String userName;
 	private String password;
 	private String biography;
 	private String email;
 	private String name;
 	private Gender gender;
+	private Photo photo;
+	private Comment comment;
+	private Set<Video> videos = new HashSet<Video>();
+	private Set<Photo> photos = new HashSet<Photo>();
+	private Set<User> weFollow = new HashSet<User>();
+	private Set<User> theyFollow = new HashSet<User>();
+	private LoginNewsFeed loginNewsFeed = new LoginNewsFeed();
+	private MyNewsFeed myNewsFeed = new MyNewsFeed();
 	private boolean isRegistered = false;
-	private NewsFeed followersNewsFeeds;
 
 	// map username-->password
 	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
@@ -88,7 +88,7 @@ public class User implements IUser {
 				videos.add((Video) feature);
 			}
 			for (User followers : theyFollow) {
-				followers.followersNewsFeeds.addedToNewsFeed(feature);
+				followers.loginNewsFeed.addedToNewsFeed(feature, followers);
 			}
 		}
 	}
@@ -180,10 +180,8 @@ public class User implements IUser {
 		if (name != null && !name.equals("") && password != null && !password.equals("")) {
 			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
 				loginUsers.add(this);
-				if (!newFeeds.isEmpty()) {
-					for (NewsFeed f : newFeeds) {
-						System.out.println(f);
-					}
+				if (loginNewsFeed != null) {
+					loginNewsFeed.showNewsFeed();
 				} else {
 					System.out.println("NO available newsfeed");
 				}
@@ -257,10 +255,6 @@ public class User implements IUser {
 
 	}
 
-	// public void download(){
-	//
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -271,6 +265,12 @@ public class User implements IUser {
 		try {
 			if (feature != null && loginUsers.contains(this)) {
 				feature.like(feature);
+				String addToNewsFeed = this + " like your " + feature;
+				if (feature.getOwner() != null) {
+					feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+				} else {
+					throw new NoValidDataException("Invalid picture");
+				}
 			} else {
 				throw new NoValidDataException("You are not login and you cannot like");
 			}
@@ -285,9 +285,15 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#unlike(Instagram_Project.UploadableFeature)
 	 */
 	@Override
-	public void unlike(UploadableFeature feature) {
+	public void unlike(UploadableFeature feature) throws NoValidDataException {
 		if (feature != null && loginUsers.contains(this)) {
 			feature.unlike(feature);
+			String addToNewsFeed = this + " unlike your " + feature;
+			if (feature.getOwner() != null) {
+				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+			} else {
+				throw new NoValidDataException("Invalid picture");
+			}
 		}
 	}
 
@@ -371,8 +377,18 @@ public class User implements IUser {
 		if (!(feature != null && comment1 != null && !comment1.equals(""))) {
 			throw new NoValidDataException("Invalid posting of coment");
 		}
+		String addToNewsFeed = this + " comment your " + feature;
+		if (feature.getOwner() != null) {
+			feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+		} else {
+			throw new NoValidDataException("Invalid picture");
+		}
 		return feature.add(comment1, feature);
 
+	}
+
+	public void showMyNewsFeed() {
+		myNewsFeed.showMyNewsFeed();
 	}
 
 	public void tagPerson(User user, UploadableFeature feature) {
@@ -391,6 +407,14 @@ public class User implements IUser {
 		return photos;
 	}
 
-	// TODO public void editProfile(){
+	public void changePassword(String newPassword) {
+		if (password != null && !password.equals("")) {
+			this.password = newPassword;
+		}
+	}
 
+	public void changeBiography(String biography) {
+		this.biography = biography;
+
+	}
 }

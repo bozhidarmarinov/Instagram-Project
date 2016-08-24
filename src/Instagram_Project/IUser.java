@@ -21,7 +21,7 @@ public interface IUser {
 
 	void like(UploadableFeature feature) throws NoValidDataException;
 
-	void unlike(UploadableFeature feature);
+	void unlike(UploadableFeature feature) throws NoValidDataException;
 
 	void follow(User user) throws NoValidDataException;
 
