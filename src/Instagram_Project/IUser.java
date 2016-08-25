@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface IUser {
 
-	void uploadFeature(UploadableFeature feature);
+	void uploadFeature(UploadableFeature feature) throws NoValidDataException;
 
 	void showProfile();
 
@@ -30,5 +30,7 @@ public interface IUser {
 	void shareFeature() throws MalformedURLException;
 
 	void renameFeatureDescription(UploadableFeature feature, String description) throws NoValidDataException;
+
+	String registerUser() throws NoValidDataException;
 
 }

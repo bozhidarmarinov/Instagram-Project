@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.*;
 
+import javax.swing.CellEditor;
+
 public class User implements IUser {
 
 	private String userName;
@@ -47,16 +49,17 @@ public class User implements IUser {
 
 	}
 
-	public void registerUser() throws NoValidDataException {
-
+	@Override
+	public String registerUser() throws NoValidDataException {
 		if (registeredUsers.contains(this)) {
 			System.out.println("User already registered!Please,try again");
+			return "User already registered!Please,try again";
 		} else {
 			registeredUsers.add(this);
 			loginDetails.put(this.userName, this.password);
 			isRegistered = true;
 			System.out.println("Registration successful");
-
+			return "Registration successful";
 		}
 	}
 
@@ -79,7 +82,7 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#uploadPicture()
 	 */
 	@Override
-	public void uploadFeature(UploadableFeature feature) {
+	public void uploadFeature(UploadableFeature feature) throws NoValidDataException {
 		if (loginUsers.contains(this) && feature != null) {
 			if (feature instanceof Photo) {
 				photos.add((Photo) feature);
@@ -90,6 +93,9 @@ public class User implements IUser {
 			for (User followers : theyFollow) {
 				followers.loginNewsFeed.addedToNewsFeed(feature, followers);
 			}
+			
+		}else {
+			throw new NoValidDataException("Photo/video you try to upload does not exist ");
 		}
 	}
 
@@ -117,6 +123,7 @@ public class User implements IUser {
 		System.out.println("\nMy videos\n");
 		for (Video video : videos) {
 			System.out.println("\t" + video + " ");
+			System.out.println(video.getComments());
 		}
 	}
 
@@ -200,28 +207,6 @@ public class User implements IUser {
 		}
 	}
 
-	// for (User user : registeredUsers) {
-	// if ((name.equals(user.userName) && password.equals(user.password))) {
-	// loginUsers.add(this);
-	// if (!newFeeds.isEmpty()) {
-	// for (FollowersNewsFeed f : newFeeds) {
-	// System.out.println(f);
-	// }
-	// } else {
-	// System.out.println("NO available newfeeds");
-	// }
-	//
-	// } else {
-	// if (!name.equals(user.userName)) {
-	// System.out.println("Invalid name");
-	// } else {
-	// if (!name.equals(user.password)) {
-	// System.out.println("Invalid password");
-	// }
-	// }
-	// }
-	// }
-
 	@Override
 	public int hashCode() {
 		return (this.email.hashCode()) * (this.userName.hashCode());
@@ -265,9 +250,16 @@ public class User implements IUser {
 		try {
 			if (feature != null && loginUsers.contains(this)) {
 				feature.like(feature);
-				String addToNewsFeed = this + " like your " + feature;
+				String addToNewsFeed;
 				if (feature.getOwner() != null) {
-					feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+					if (feature instanceof Photo) {
+						addToNewsFeed = this + " like your photo " + feature;
+						feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+					} else {
+						addToNewsFeed = this + " like your video " + feature;
+						feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+					}
+
 				} else {
 					throw new NoValidDataException("Invalid picture");
 				}
@@ -288,9 +280,16 @@ public class User implements IUser {
 	public void unlike(UploadableFeature feature) throws NoValidDataException {
 		if (feature != null && loginUsers.contains(this)) {
 			feature.unlike(feature);
-			String addToNewsFeed = this + " unlike your " + feature;
+			String addToNewsFeed;
 			if (feature.getOwner() != null) {
-				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+				if (feature instanceof Photo) {
+					addToNewsFeed = this + " unlike your photo " + feature;
+					feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+				} else {
+					addToNewsFeed = this + " unlike your video " + feature;
+					feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+				}
+
 			} else {
 				throw new NoValidDataException("Invalid picture");
 			}
@@ -358,28 +357,21 @@ public class User implements IUser {
 
 	}
 
-	public void showRegistredUsers() {
-		for (User user : registeredUsers) {
-			System.out.println(user);
-		}
-	}
-
-	public boolean isRegistered() {
-		return isRegistered;
-	}
-
-	@Override
-	public String toString() {
-		return userName;
-	}
-
 	public Comment addComment(UploadableFeature feature, String comment1) throws NoValidDataException {
 		if (!(feature != null && comment1 != null && !comment1.equals(""))) {
 			throw new NoValidDataException("Invalid posting of coment");
 		}
-		String addToNewsFeed = this + " comment your " + feature;
+
+		String addToNewsFeed;
 		if (feature.getOwner() != null) {
-			feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+			if (feature instanceof Photo) {
+				addToNewsFeed = this + " comment your photo " + feature;
+				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+			} else {
+				addToNewsFeed = this + " comment your video " + feature;
+				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+			}
+
 		} else {
 			throw new NoValidDataException("Invalid picture");
 		}
@@ -398,18 +390,27 @@ public class User implements IUser {
 			System.out.println("This user cannot be tag");
 		}
 	}
-
-	public Set<Video> getVideos() {
-		return videos;
+	
+	public void showRegistredUsers() {
+		for (User user : registeredUsers) {
+			System.out.println(user);
+		}
 	}
 
-	public Set<Photo> getPhotos() {
-		return photos;
+	public boolean isRegistered() {
+		return isRegistered;
 	}
 
-	public void changePassword(String newPassword) {
+	@Override
+	public String toString() {
+		return userName;
+	}
+
+	public void changePassword(String newPassword) throws NoValidDataException {
 		if (password != null && !password.equals("")) {
 			this.password = newPassword;
+		}else {
+			throw new NoValidDataException("Please, enter a valid password");
 		}
 	}
 

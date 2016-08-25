@@ -8,10 +8,10 @@ public interface IUploadableFeature extends IFeature {
 
 	public void share();
 
-	public void like(UploadableFeature feature);
+	public int like(UploadableFeature feature) throws NoValidDataException;
 
-	public void unlike(UploadableFeature feature);
+	public int unlike(UploadableFeature feature) throws NoValidDataException;
 
-	Comment add(String comment, UploadableFeature feature);
+	Comment add(String comment, UploadableFeature feature) throws NoValidDataException;
 
 }

@@ -1,18 +1,21 @@
 package Instagram_Project;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Feature implements IFeature{
 
-	private IUser creator;
-	private String text;
-	private Calendar timeStamp;
+	private LocalDateTime timeStamp;
 	
-	private List<Feature> features=new LinkedList<Feature>();
+	public Feature(){
+		timeStamp=LocalDateTime.now();
+	}
 	
-	
-	
-	
+	public LocalDateTime getTimeStamp(){
+		return timeStamp;
+	}
+
 }
