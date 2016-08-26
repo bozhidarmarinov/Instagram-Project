@@ -9,14 +9,11 @@ import java.util.TreeSet;
 public abstract class UploadableFeature extends Feature implements IUploadableFeature, IFeature {
 
 	// private String name; // ako ne ni posluji, da iztriem
-	//private Comment comment;
 	private String description;
 	private static int numberOfLikes;
 	private User owner;
 	private String city;
 	private boolean isLiked;
-	//protected Set<User> commenters;
-	//protected Set<User> likers;
 	protected static List<Comment> comments = new LinkedList<Comment>();
 	protected static List<User> taggedUsers = new LinkedList<User>();
 
@@ -26,23 +23,20 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 
 	public UploadableFeature(String description, User owner) throws NoValidDataException {
 		this(description);
-		if (owner!=null) {
+		if (owner != null) {
 			this.owner = owner;
-		}else {
+		} else {
 			throw new NoValidDataException("Please chose a valid user");
 		}
 	}
-	
+
 	public UploadableFeature(String description) throws NoValidDataException {
-		super();
 		if (description != null && !description.equals("")) {
 			this.description = description;
-		}else {
+		} else {
 			throw new NoValidDataException("Please chose a valid user");
 		}
 	}
-
-
 
 	@Override
 	public void tag(User user) throws NoValidDataException {
@@ -55,31 +49,31 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 
 	@Override
 	public int like(UploadableFeature feature) throws NoValidDataException {
-		if (feature!=null) {
+		if (feature != null) {
 			UploadableFeature.numberOfLikes += 1;
 			System.out.println(" Number of Likes : " + UploadableFeature.numberOfLikes);
 			isLiked = true;
-			
-		}else {
-			
+
+		} else {
+
 			throw new NoValidDataException("Please, choose a valid feature to like");
 		}
 		return numberOfLikes;
-		
+
 	}
 
 	@Override
 	public int unlike(UploadableFeature feature) throws NoValidDataException {
-		if (feature!=null) {
+		if (feature != null) {
 			if (isLiked == true) {
 				UploadableFeature.numberOfLikes -= 1;
 				System.out.println(" Number of Likes : " + UploadableFeature.numberOfLikes);
 			}
-		}else {
+		} else {
 			throw new NoValidDataException("Please, choose a valid feature to unlike");
 		}
 		return numberOfLikes;
-		
+
 	}
 
 	@Override
@@ -92,7 +86,7 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	public List<Comment> getComments() {
 		return comments;
 	}
-	
+
 	@Override
 	public void rename(String description) {
 		this.description = description;

@@ -9,11 +9,7 @@ public class Photo extends UploadableFeature{
 		super(description, owner);
 	}
 
-	@Override
-	public void share() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 

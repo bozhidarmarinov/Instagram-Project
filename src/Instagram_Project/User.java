@@ -93,8 +93,8 @@ public class User implements IUser {
 			for (User followers : theyFollow) {
 				followers.loginNewsFeed.addedToNewsFeed(feature, followers);
 			}
-			
-		}else {
+
+		} else {
 			throw new NoValidDataException("Photo/video you try to upload does not exist ");
 		}
 	}
@@ -105,40 +105,44 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#showProfile()
 	 */
 	@Override
-	public void showProfile() {
-
-		System.out.println("I follow:");
+	public String showProfile() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("I follow:");
 		for (User weFollows : weFollow) {
-			System.out.print("\t" + weFollows + " ");
+			builder.append("\t" + weFollows + " ");
 		}
-		System.out.println("\nMy followers are:");
+		builder.append("\nMy followers are:");
 		for (User theyFollows : theyFollow) {
-			System.out.print("\t" + theyFollows + " ");
+			builder.append("\t" + theyFollows + " ");
 		}
-		System.out.println("\nMy photos");
+		builder.append("\nMy photos");
 		for (Photo photo : photos) {
-			System.out.print("\t" + photo + " ");
-			System.out.println(photo.getComments());
+			builder.append("\t" + photo + " ");
+			builder.append(photo.getComments());
 		}
-		System.out.println("\nMy videos\n");
+		builder.append("\nMy videos\n");
 		for (Video video : videos) {
-			System.out.println("\t" + video + " ");
-			System.out.println(video.getComments());
+			builder.append("\t" + video + " ");
+			builder.append(video.getComments());
 		}
+		return builder.toString();
+
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * 
 	 * 
 	 * @see Instagram_Project.IUser#searchForPeople(java.lang.String)
 	 */
 	@Override
-	public void searchForPeople(String name) {
-		for (User user : registeredUsers) {
-			if (user.name.equals(name)) {
-				user.showProfile();
-			} else {
-				System.out.println("User not found!");
+	public void searchForPeople(String userName) {
+		if (userName != null && !userName.equals(" ")) {
+			for (User user : registeredUsers) {
+				if (user.userName != null) {
+					if (user.userName.equals(userName)) {
+						System.out.println(user.showProfile());
+					}
+				}
 			}
 		}
 	}
@@ -173,7 +177,7 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#searchWithHashtag(java.lang.String)
 	 */
 	@Override
-	public void searchWithHashtag(String hashTag) { // izqsnqvane na sluchaq
+	public void searchWithHashtag(String hashTag) {
 
 	}
 
@@ -183,7 +187,7 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void login(String name, String password) {
+	public User login(String name, String password) {
 		if (name != null && !name.equals("") && password != null && !password.equals("")) {
 			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
 				loginUsers.add(this);
@@ -205,6 +209,7 @@ public class User implements IUser {
 
 			}
 		}
+		return this;
 	}
 
 	@Override
@@ -390,7 +395,7 @@ public class User implements IUser {
 			System.out.println("This user cannot be tag");
 		}
 	}
-	
+
 	public void showRegistredUsers() {
 		for (User user : registeredUsers) {
 			System.out.println(user);
@@ -409,7 +414,7 @@ public class User implements IUser {
 	public void changePassword(String newPassword) throws NoValidDataException {
 		if (password != null && !password.equals("")) {
 			this.password = newPassword;
-		}else {
+		} else {
 			throw new NoValidDataException("Please, enter a valid password");
 		}
 	}
@@ -418,4 +423,5 @@ public class User implements IUser {
 		this.biography = biography;
 
 	}
+
 }

@@ -7,15 +7,15 @@ public interface IUser {
 
 	void uploadFeature(UploadableFeature feature) throws NoValidDataException;
 
-	void showProfile();
+	String showProfile();
 
-	void searchForPeople(String name);
+	void searchForPeople(String name) throws NoValidDataException;
 
 	List<UploadableFeature> serchForPlaces(String place) throws NoValidDataException;
 
 	void searchWithHashtag(String hashTag);
 
-	void login(String name, String password);
+	User login(String name, String password) throws NoValidDataException;
 
 	void logOut();
 

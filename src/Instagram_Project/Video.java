@@ -1,7 +1,6 @@
 package Instagram_Project;
 
 public class Video extends UploadableFeature {
-	
 
 	private Property properties;
 
@@ -9,9 +8,4 @@ public class Video extends UploadableFeature {
 		super(description, owner);
 	}
 
-	@Override
-	public void share() {
-		// TODO Auto-generated method stub
-		
-	}
 }
