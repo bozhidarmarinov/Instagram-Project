@@ -252,7 +252,6 @@ public class User implements IUser {
 	 */
 	@Override
 	public void like(UploadableFeature feature) throws NoValidDataException {
-		try {
 			if (feature != null && loginUsers.contains(this)) {
 				feature.like(feature);
 				String addToNewsFeed;
@@ -269,11 +268,8 @@ public class User implements IUser {
 					throw new NoValidDataException("Invalid picture");
 				}
 			} else {
-				throw new NoValidDataException("You are not login and you cannot like");
+				throw new NoValidDataException("You are not logged in and you cannot like");
 			}
-		} catch (Exception e) {
-			System.out.println("You are not login and you cannot like");
-		}
 	}
 
 	/*

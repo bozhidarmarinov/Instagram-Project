@@ -80,6 +80,7 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	public Comment add(String comment, UploadableFeature feature) throws NoValidDataException {
 		Comment myComment = new Comment(comment, feature);
 		feature.getComments().add(myComment);
+//		feature.addComment(myComment);
 		return myComment;
 	}
 
