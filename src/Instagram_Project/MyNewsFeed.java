@@ -12,8 +12,9 @@ public class MyNewsFeed extends NewsFeed {
 		super();
 	}
 
-	public void addToMyNewsFeed(String result) {
+	public String addToMyNewsFeed(String result) {
 		myNewFeeds.add(result);
+		return result;
 	}
 
 	public List<String> showMyNewsFeed() {

@@ -2,10 +2,11 @@ package Instagram_Project;
 
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Set;
 
 public interface IUser {
 
-	void uploadFeature(UploadableFeature feature) throws NoValidDataException;
+	UploadableFeature uploadFeature(UploadableFeature feature) throws NoValidDataException;
 
 	String showProfile();
 
@@ -13,15 +14,15 @@ public interface IUser {
 
 	List<UploadableFeature> serchForPlaces(String place) throws NoValidDataException;
 
-	void searchWithHashtag(String hashTag);
+	Set<IFeature> searchWithHashtag(String hashTag);
 
 	User login(String name, String password) throws NoValidDataException;
 
 	void logOut();
 
-	void like(UploadableFeature feature) throws NoValidDataException;
+	int like(UploadableFeature feature) throws NoValidDataException;
 
-	void unlike(UploadableFeature feature) throws NoValidDataException;
+	int unlike(UploadableFeature feature) throws NoValidDataException;
 
 	void follow(User user) throws NoValidDataException;
 
@@ -29,7 +30,7 @@ public interface IUser {
 
 	void shareFeature() throws MalformedURLException;
 
-	void renameFeatureDescription(UploadableFeature feature, String description) throws NoValidDataException;
+	UploadableFeature renameFeatureDescription(UploadableFeature feature, String description) throws NoValidDataException;
 
 	String registerUser() throws NoValidDataException;
 

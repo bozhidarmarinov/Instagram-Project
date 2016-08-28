@@ -18,12 +18,19 @@ public class User implements IUser {
 	private Photo photo;
 	private Comment comment;
 	private Set<Video> videos = new HashSet<Video>();
-	private Set<Photo> photos = new HashSet<Photo>();
+	private List<Photo> photos = new ArrayList<Photo>();
 	private Set<User> weFollow = new HashSet<User>();
 	private Set<User> theyFollow = new HashSet<User>();
 	private LoginNewsFeed loginNewsFeed = new LoginNewsFeed();
 	private MyNewsFeed myNewsFeed = new MyNewsFeed();
 	private boolean isRegistered = false;
+	private Set<IFeature> hashTagged = new HashSet<IFeature>();
+
+	public void showPhotos() {
+		for (Photo photo : photos) {
+			System.out.println(photo);
+		}
+	}
 
 	// map username-->password
 	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
@@ -82,7 +89,7 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#uploadPicture()
 	 */
 	@Override
-	public void uploadFeature(UploadableFeature feature) throws NoValidDataException {
+	public UploadableFeature uploadFeature(UploadableFeature feature) throws NoValidDataException {
 		if (loginUsers.contains(this) && feature != null) {
 			if (feature instanceof Photo) {
 				photos.add((Photo) feature);
@@ -97,6 +104,7 @@ public class User implements IUser {
 		} else {
 			throw new NoValidDataException("Photo/video you try to upload does not exist ");
 		}
+		return feature;
 	}
 
 	/*
@@ -140,7 +148,7 @@ public class User implements IUser {
 			for (User user : registeredUsers) {
 				if (user.userName != null) {
 					if (user.userName.equals(userName)) {
-						System.out.println(user.showProfile());
+
 					}
 				}
 			}
@@ -177,8 +185,20 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#searchWithHashtag(java.lang.String)
 	 */
 	@Override
-	public void searchWithHashtag(String hashTag) {
-
+	public Set<IFeature> searchWithHashtag(String hashTag) {
+		if (hashTag.startsWith("#")) {
+			for (Photo photo : photos) {
+				if (photo.getDescription().equals(hashTag)) {
+					hashTagged.add(photo);
+				}
+			}
+			for (Video video : videos) {
+				if (video.getDescription().equals(hashTag)) {
+					hashTagged.add(video);
+				}
+			}
+		}
+		return hashTagged;
 	}
 
 	/*
@@ -251,7 +271,7 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#like(Instagram_Project.UploadableFeature)
 	 */
 	@Override
-	public void like(UploadableFeature feature) throws NoValidDataException {
+	public int like(UploadableFeature feature) throws NoValidDataException {
 		try {
 			if (feature != null && loginUsers.contains(this)) {
 				feature.like(feature);
@@ -274,6 +294,7 @@ public class User implements IUser {
 		} catch (Exception e) {
 			System.out.println("You are not login and you cannot like");
 		}
+		return feature.getNumberOfLikes();
 	}
 
 	/*
@@ -282,7 +303,7 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#unlike(Instagram_Project.UploadableFeature)
 	 */
 	@Override
-	public void unlike(UploadableFeature feature) throws NoValidDataException {
+	public int unlike(UploadableFeature feature) throws NoValidDataException {
 		if (feature != null && loginUsers.contains(this)) {
 			feature.unlike(feature);
 			String addToNewsFeed;
@@ -299,6 +320,7 @@ public class User implements IUser {
 				throw new NoValidDataException("Invalid picture");
 			}
 		}
+		return feature.getNumberOfLikes();
 	}
 
 	/*
@@ -353,12 +375,14 @@ public class User implements IUser {
 	 * UploadableFeature, java.lang.String)
 	 */
 	@Override
-	public void renameFeatureDescription(UploadableFeature feature, String description) throws NoValidDataException {
-		if (feature != null) {
-			feature.rename(description);
-		} else {
+	public UploadableFeature renameFeatureDescription(UploadableFeature feature, String description)
+			throws NoValidDataException {
+		if (feature == null) {
 			throw new NoValidDataException("This photo/video does not exist");
+		} else {
+			feature.rename(description);
 		}
+		return feature;
 
 	}
 
@@ -396,10 +420,12 @@ public class User implements IUser {
 		}
 	}
 
-	public void showRegistredUsers() {
+	public StringBuilder  showRegistredUsers() {
+		StringBuilder builder = new StringBuilder();
 		for (User user : registeredUsers) {
-			System.out.println(user);
+			builder.append(user + " ");
 		}
+		return builder;
 	}
 
 	public boolean isRegistered() {

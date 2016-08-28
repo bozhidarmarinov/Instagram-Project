@@ -2,7 +2,7 @@ package Instagram_Project;
 
 public interface IUploadableFeature extends IFeature {
 
-	public void rename(String descriptio) throws NoValidDataException;
+	public String rename(String descriptio) throws NoValidDataException;
 
 	public void tag(User user) throws NoValidDataException;
 
