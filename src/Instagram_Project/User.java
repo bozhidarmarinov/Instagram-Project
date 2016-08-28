@@ -17,13 +17,13 @@ public class User implements IUser {
 	private Gender gender;
 	private Photo photo;
 	private Comment comment;
+	private boolean isRegistered = false;
 	private Set<Video> videos = new HashSet<Video>();
 	private List<Photo> photos = new ArrayList<Photo>();
 	private Set<User> weFollow = new HashSet<User>();
 	private Set<User> theyFollow = new HashSet<User>();
 	private LoginNewsFeed loginNewsFeed = new LoginNewsFeed();
 	private MyNewsFeed myNewsFeed = new MyNewsFeed();
-	private boolean isRegistered = false;
 	private Set<IFeature> hashTagged = new HashSet<IFeature>();
 
 	public void showPhotos() {
@@ -420,7 +420,7 @@ public class User implements IUser {
 		}
 	}
 
-	public StringBuilder  showRegistredUsers() {
+	public StringBuilder showRegistredUsers() {
 		StringBuilder builder = new StringBuilder();
 		for (User user : registeredUsers) {
 			builder.append(user + " ");

@@ -38,7 +38,7 @@ public class DemoSite {
 		Photo photo1 = new Photo(profile1, "hello");
 		profile1.uploadFeature(photo1);
 		Photo photo2 = new Photo(profile1, "In the jungle");
-		profile1.uploadFeature(photo1);
+		profile1.uploadFeature(photo2);
 
 		// follow someone
 		System.out.println("FOLLOW:");
@@ -72,10 +72,7 @@ public class DemoSite {
 		profile2.addComment(photo2, "snimka 2");
 		System.out.println(photo2);
 		System.out.println(profile1.showProfile());
-	
-		
-		System.out.println(profile2.searchWithHashtag("#hello"));
-
 		System.out.println(profile1.showRegistredUsers());
+		
 	}
 }
