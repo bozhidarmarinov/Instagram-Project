@@ -8,14 +8,23 @@ import java.util.TreeSet;
 
 public abstract class UploadableFeature extends Feature implements IUploadableFeature, IFeature {
 
-	// private String name; // ako ne ni posluji, da iztriem
 	private String description;
 	private static int numberOfLikes;
 	private User owner;
 	private String city;
 	private boolean isLiked;
-	protected static List<Comment> comments = new LinkedList<Comment>();
-	protected static List<User> taggedUsers = new LinkedList<User>();
+	protected List<Comment> comments = new LinkedList<Comment>();
+	protected List<User> taggedUsers = new LinkedList<User>();
+	
+	
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getDescription() {
+		return description;
+	}
 
 	public User getOwner() {
 		return owner;
@@ -41,7 +50,7 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	@Override
 	public void tag(User user) throws NoValidDataException {
 		if (user != null && user.isRegistered() == true) {
-			UploadableFeature.taggedUsers.add(user);
+			taggedUsers.add(user);
 		} else {
 			throw new NoValidDataException("This user cannot be tag");
 		}
@@ -89,8 +98,9 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	}
 
 	@Override
-	public void rename(String description) {
+	public String rename(String description) {
 		this.description = description;
+		return description;
 	}
 
 	@Override
@@ -100,11 +110,6 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 
 	public int getNumberOfLikes() {
 		return numberOfLikes;
-	}
-
-	public void setNumberOfLikes(int numberOfLikes) {
-		UploadableFeature.numberOfLikes = numberOfLikes;
-
 	}
 
 	public String getCity() {

@@ -28,24 +28,17 @@ public class DemoSite {
 			e1.printStackTrace();
 		}
 
-		profile1.showRegistredUsers();
-
-		// login and logout
-
-		System.out.println("LOGIN USERS:\n");
-
 		profile1.login("georgi", "123");
 		profile2.login("georgi", "123");
 
-		System.out.println("LOGOUT USERS");
-		profile1.logOut();
-		profile2.logOut();
-
+	
 		// upload photo
 		System.out.println("UPLOAD PHOTO:\n");
-		Photo photo1 = new Photo(profile1, "On the beach");
 		profile1.login("georgi", "123");
+		Photo photo1 = new Photo(profile1, "hello");
 		profile1.uploadFeature(photo1);
+		Photo photo2 = new Photo(profile1, "In the jungle");
+		profile1.uploadFeature(photo2);
 
 		// follow someone
 		System.out.println("FOLLOW:");
@@ -54,7 +47,7 @@ public class DemoSite {
 
 		// follow me
 		System.out.println("FOLLOW ME:");
-		profile4.follow(profile1);
+		profile2.follow(profile1);
 
 		// show profile
 		System.out.println("SHOW PROFILE");
@@ -70,43 +63,16 @@ public class DemoSite {
 		profile4.like(photo1);
 
 		// addComment
-		profile1.addComment(photo1, "Az sum snimka");
-		profile1.showProfile();
-		profile4.logOut();
+		profile1.addComment(photo1, "#snimka");
 		profile1.tagPerson(profile3, photo1);
 		profile1.tagPerson(profile2, photo1);
 		profile1.tagPerson(profile4, photo1);
 		System.out.println(photo1);
 		profile4.login("ani", "abc");
-
-		profile1.registerUser();
-		profile2.registerUser();
-		profile1.login("georgi", "123");
-
-		profile2.login("georgi2", "123");
-		profile2.follow(profile1);
-
-		profile2.logOut();
-		profile1.uploadFeature(photo1);
-		profile2.login("georgi2", "123");
-		profile2.logOut();
-		profile1.uploadFeature(photo1);
-		profile2.login("georgi2", "123");
-		profile2.addComment(photo1, "Ae chao!");
-		profile2.like(photo1);
-		profile1.follow(profile2);
-		profile1.showMyNewsFeed();
-		profile2.unlike(photo1);
-		profile1.showMyNewsFeed();
-
-		// profile1.searchForPeople("georgi2");
-		profile1.showProfile();
-		System.out.println();
-		System.out.println();
+		profile2.addComment(photo2, "snimka 2");
+		System.out.println(photo2);
 		System.out.println(profile1.showProfile());
-		profile1.searchForPeople("georgi2");
-		profile2.logOut();
-		profile2.login("georgi2", "123");
-
+		System.out.println(profile1.showRegistredUsers());
+		
 	}
 }
