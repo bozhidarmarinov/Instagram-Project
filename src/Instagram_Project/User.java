@@ -19,18 +19,12 @@ public class User implements IUser {
 	private Comment comment;
 	private boolean isRegistered = false;
 	private Set<Video> videos = new HashSet<Video>();
-	private List<Photo> photos = new ArrayList<Photo>();
+	private Set<Photo> photos = new HashSet<Photo>();
 	private Set<User> weFollow = new HashSet<User>();
 	private Set<User> theyFollow = new HashSet<User>();
 	private LoginNewsFeed loginNewsFeed = new LoginNewsFeed();
 	private MyNewsFeed myNewsFeed = new MyNewsFeed();
 	private Set<IFeature> hashTagged = new HashSet<IFeature>();
-
-	public void showPhotos() {
-		for (Photo photo : photos) {
-			System.out.println(photo);
-		}
-	}
 
 	// map username-->password
 	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
@@ -56,18 +50,27 @@ public class User implements IUser {
 
 	}
 
+	public void showPhotos() {
+		for (Photo photo : photos) {
+			System.out.println(photo);
+		}
+	}
+
 	@Override
 	public String registerUser() throws NoValidDataException {
+		String message;
 		if (registeredUsers.contains(this)) {
+			message = "User already registered!Please,try again";
 			System.out.println("User already registered!Please,try again");
-			return "User already registered!Please,try again";
 		} else {
 			registeredUsers.add(this);
 			loginDetails.put(this.userName, this.password);
 			isRegistered = true;
 			System.out.println("Registration successful");
-			return "Registration successful";
+			message = "Registration successful";
 		}
+		return message;
+
 	}
 
 	public boolean isValidEmail(String email) {
@@ -76,11 +79,37 @@ public class User implements IUser {
 			String regexEmail = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$";
 			boolean isMatch = email.matches(regexEmail);
 			return isMatch;
-
 		} else {
 			return false;
 		}
 
+	}
+
+	@Override
+	public User login(String name, String password)
+			throws NewsFeedException, UserException, InvalidUserException, InvalidPasswordException {
+		if (name != null && !name.equals("") && password != null && !password.equals("")) {
+			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
+				loginUsers.add(this);
+				if (loginNewsFeed != null) {
+					loginNewsFeed.showNewsFeed();
+				} else {
+					throw new NewsFeedException("NO available newsfeed");
+				}
+			} else {
+				if (!isRegistered) {
+					throw new UserException("This is not a registered user");
+				} else {
+					if (!loginDetails.containsKey(name)) {
+						throw new InvalidUserException("Invalid user name");
+					} else {
+						throw new InvalidPasswordException("Invalid password");
+					}
+				}
+
+			}
+		}
+		return this;
 	}
 
 	/*
@@ -97,8 +126,10 @@ public class User implements IUser {
 			if (feature instanceof Video) {
 				videos.add((Video) feature);
 			}
-			for (User followers : theyFollow) {
-				followers.loginNewsFeed.addedToNewsFeed(feature, followers);
+			for (User follower : theyFollow) {
+				if (follower != null && follower.loginNewsFeed != null) {
+					follower.loginNewsFeed.addedToNewsFeed(feature, follower);
+				}
 			}
 
 		} else {
@@ -143,16 +174,20 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#searchForPeople(java.lang.String)
 	 */
 	@Override
-	public void searchForPeople(String userName) {
-		if (userName != null && !userName.equals(" ")) {
+	public List<User> searchForPeople(String userName) throws NoValidDataException {
+		List<User> matchUser = new LinkedList<User>();
+		if (userName != null && !userName.equals("")) {
 			for (User user : registeredUsers) {
 				if (user.userName != null) {
 					if (user.userName.equals(userName)) {
-
+						matchUser.add(user);
 					}
 				}
 			}
+		} else {
+			throw new NoValidDataException("Enter a user to search!");
 		}
+		return matchUser;
 	}
 
 	/*
@@ -206,31 +241,6 @@ public class User implements IUser {
 	 * 
 	 * @see Instagram_Project.IUser#login(java.lang.String, java.lang.String)
 	 */
-	@Override
-	public User login(String name, String password) {
-		if (name != null && !name.equals("") && password != null && !password.equals("")) {
-			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
-				loginUsers.add(this);
-				if (loginNewsFeed != null) {
-					loginNewsFeed.showNewsFeed();
-				} else {
-					System.out.println("NO available newsfeed");
-				}
-			} else {
-				if (!isRegistered) {
-					System.out.println("This is not a registered user");
-				} else {
-					if (!loginDetails.containsKey(name)) {
-						System.out.println("Invalid user name");
-					} else {
-						System.out.println("Invalid password");
-					}
-				}
-
-			}
-		}
-		return this;
-	}
 
 	@Override
 	public int hashCode() {
@@ -271,37 +281,23 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#like(Instagram_Project.UploadableFeature)
 	 */
 	@Override
-<<<<<<< HEAD
-	public void like(UploadableFeature feature) throws NoValidDataException {
-=======
-	public int like(UploadableFeature feature) throws NoValidDataException {
-		try {
->>>>>>> 1980d8026f1440db0a3a40f117d02e57feeba2a6
-			if (feature != null && loginUsers.contains(this)) {
-				feature.like(feature);
-				String addToNewsFeed;
-				if (feature.getOwner() != null) {
-					if (feature instanceof Photo) {
-						addToNewsFeed = this + " like your photo " + feature;
-						feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
-					} else {
-						addToNewsFeed = this + " like your video " + feature;
-						feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
-					}
 
-				} else {
-					throw new NoValidDataException("Invalid picture");
-				}
+	public int like(UploadableFeature feature) throws NoValidDataException {
+
+		if (feature != null && loginUsers.contains(this)) {
+			feature.like(feature);
+			String addToNewsFeed;
+			if (feature.getOwner() != null) {
+				addToNewsFeed = this + " like your" + feature.getTypeOfFeature(feature) + feature;
+				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+
 			} else {
-				throw new NoValidDataException("You are not logged in and you cannot like");
+				throw new NoValidDataException("Invalid picture");
 			}
-<<<<<<< HEAD
-=======
-		} catch (Exception e) {
-			System.out.println("You are not login and you cannot like");
+		} else {
+			throw new NoValidDataException("You are not logged in and you cannot like");
 		}
 		return feature.getNumberOfLikes();
->>>>>>> 1980d8026f1440db0a3a40f117d02e57feeba2a6
 	}
 
 	/*
@@ -315,13 +311,8 @@ public class User implements IUser {
 			feature.unlike(feature);
 			String addToNewsFeed;
 			if (feature.getOwner() != null) {
-				if (feature instanceof Photo) {
-					addToNewsFeed = this + " unlike your photo " + feature;
-					feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
-				} else {
-					addToNewsFeed = this + " unlike your video " + feature;
-					feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
-				}
+				addToNewsFeed = this + " unlike your" + feature.getTypeOfFeature(feature) + feature;
+				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
 
 			} else {
 				throw new NoValidDataException("Invalid picture");
@@ -336,32 +327,37 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#follow(Instagram_Project.User)
 	 */
 	@Override
-	public void follow(User user) throws NoValidDataException {
+	public String follow(User user) throws NoValidDataException {
+		String message;
 		if (user != null && user.isRegistered == true) {
 			if (weFollow.contains(user)) {
-				System.out.println("You already follow this person");
+				message = "You already follow this person";
 			} else {
 				weFollow.add(user);
 				user.theyFollow.add(this);
+				message = "You follow " + user.userName + " now ";
 			}
 		} else {
 			throw new NoValidDataException("Provide a valid or registered user");
 		}
-
+		return message;
 	}
 
 	@Override
-	public void unfollow(User user) throws NoValidDataException {
+	public String unfollow(User user) throws NoValidDataException {
+		String message;
 		if (user != null && user.isRegistered == true) {
 			if (weFollow.contains(user)) {
 				weFollow.remove(user);
 				user.theyFollow.remove(this);
+				message = "You unfollow " + user.userName;
 			} else {
-				System.out.println("You do not follow this person");
+				message="You do not follow this person";
 			}
 		} else {
 			throw new NoValidDataException("Provide a valid or registered user");
 		}
+		return message;
 	}
 
 	/*
@@ -400,14 +396,9 @@ public class User implements IUser {
 
 		String addToNewsFeed;
 		if (feature.getOwner() != null) {
-			if (feature instanceof Photo) {
-				addToNewsFeed = this + " comment your photo " + feature;
-				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
-			} else {
-				addToNewsFeed = this + " comment your video " + feature;
-				feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
-			}
-
+			addToNewsFeed = this + " comment your " + feature.getTypeOfFeature(feature) + feature;
+			feature.getOwner().myNewsFeed.addToMyNewsFeed(addToNewsFeed);
+			
 		} else {
 			throw new NoValidDataException("Invalid picture");
 		}

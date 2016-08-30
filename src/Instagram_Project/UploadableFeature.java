@@ -15,8 +15,13 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	private boolean isLiked;
 	protected List<Comment> comments = new LinkedList<Comment>();
 	protected List<User> taggedUsers = new LinkedList<User>();
+	private UploadableFeature typeOfFeature;
 	
 	
+	public String getTypeOfFeature(UploadableFeature feature){
+		return feature.getClass().getSimpleName();
+		
+	}
 
 	public void setDescription(String description) {
 		this.description = description;
@@ -94,7 +99,11 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	}
 
 	public List<Comment> getComments() {
-		return comments;
+		List<Comment> returnListComments=new LinkedList<Comment>();
+		for (Comment comment : this.comments) {
+			returnListComments.add(comment);
+		}
+		return returnListComments;
 	}
 
 	@Override

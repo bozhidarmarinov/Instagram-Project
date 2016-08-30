@@ -10,13 +10,13 @@ public interface IUser {
 
 	String showProfile();
 
-	void searchForPeople(String name) throws NoValidDataException;
+	List<User> searchForPeople(String name) throws NoValidDataException;
 
 	List<UploadableFeature> serchForPlaces(String place) throws NoValidDataException;
 
 	Set<IFeature> searchWithHashtag(String hashTag);
 
-	User login(String name, String password) throws NoValidDataException;
+	User login(String name, String password) throws NoValidDataException, NewsFeedException, UserException, InvalidUserException, InvalidPasswordException;
 
 	void logOut();
 
@@ -24,9 +24,9 @@ public interface IUser {
 
 	int unlike(UploadableFeature feature) throws NoValidDataException;
 
-	void follow(User user) throws NoValidDataException;
+	String follow(User user) throws NoValidDataException;
 
-	void unfollow(User user) throws NoValidDataException;
+	String unfollow(User user) throws NoValidDataException;
 
 	void shareFeature() throws MalformedURLException;
 
