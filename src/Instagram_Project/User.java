@@ -18,13 +18,15 @@ public class User implements IUser {
 	private Photo photo;
 	private Comment comment;
 	private boolean isRegistered = false;
-	private Set<Video> videos = new HashSet<Video>();
-	private Set<Photo> photos = new HashSet<Photo>();
+	
+	private Set<UploadableFeature> uploadableFeatures=new HashSet<UploadableFeature>();
+	//private Set<Video> videos = new HashSet<Video>();
+	//private Set<Photo> photos = new HashSet<Photo>();
 	private Set<User> weFollow = new HashSet<User>();
 	private Set<User> theyFollow = new HashSet<User>();
 	private LoginNewsFeed loginNewsFeed = new LoginNewsFeed();
 	private MyNewsFeed myNewsFeed = new MyNewsFeed();
-	private Set<IFeature> hashTagged = new HashSet<IFeature>();
+	private Set<UploadableFeature> hashTagged = new HashSet<UploadableFeature>();
 
 	// map username-->password
 	protected static Map<String, String> loginDetails = Collections.synchronizedMap(new HashMap<String, String>());
@@ -50,15 +52,16 @@ public class User implements IUser {
 
 	}
 
-	public void showPhotos() {
-		for (Photo photo : photos) {
-			System.out.println(photo);
+	public void showItems() {
+		for (UploadableFeature item : uploadableFeatures) {
+			System.out.println(item);
 		}
 	}
 
 	@Override
 	public String registerUser() throws NoValidDataException {
 		String message;
+		
 		if (registeredUsers.contains(this)) {
 			message = "User already registered!Please,try again";
 			System.out.println("User already registered!Please,try again");
@@ -87,15 +90,21 @@ public class User implements IUser {
 
 	@Override
 	public User login(String name, String password)
-			throws NewsFeedException, UserException, InvalidUserException, InvalidPasswordException {
+			throws NewsFeedException, UserException, InvalidUserException, InvalidPasswordException, NoValidDataException {
 		if (name != null && !name.equals("") && password != null && !password.equals("")) {
 			if (isRegistered == true && loginDetails.containsKey(name) && loginDetails.get(name).equals(password)) {
-				loginUsers.add(this);
-				if (loginNewsFeed != null) {
-					loginNewsFeed.showNewsFeed();
-				} else {
-					throw new NewsFeedException("NO available newsfeed");
+				if (!loginUsers.contains(this.name)) {
+					loginUsers.add(this);
+					if (loginNewsFeed != null) {
+						loginNewsFeed.showNewsFeed();
+					} else {
+						throw new NewsFeedException("NO available newsfeed");
+					}
+				}else {
+					throw new NoValidDataException("This user is already logged in");
 				}
+
+				
 			} else {
 				if (!isRegistered) {
 					throw new UserException("This is not a registered user");
@@ -120,12 +129,7 @@ public class User implements IUser {
 	@Override
 	public UploadableFeature uploadFeature(UploadableFeature feature) throws NoValidDataException {
 		if (loginUsers.contains(this) && feature != null) {
-			if (feature instanceof Photo) {
-				photos.add((Photo) feature);
-			}
-			if (feature instanceof Video) {
-				videos.add((Video) feature);
-			}
+			uploadableFeatures.add(feature);
 			for (User follower : theyFollow) {
 				if (follower != null && follower.loginNewsFeed != null) {
 					follower.loginNewsFeed.addedToNewsFeed(feature, follower);
@@ -154,15 +158,20 @@ public class User implements IUser {
 		for (User theyFollows : theyFollow) {
 			builder.append("\t" + theyFollows + " ");
 		}
-		builder.append("\nMy photos");
-		for (Photo photo : photos) {
-			builder.append("\t" + photo + " ");
-			builder.append(photo.getComments());
-		}
-		builder.append("\nMy videos\n");
-		for (Video video : videos) {
-			builder.append("\t" + video + " ");
-			builder.append(video.getComments());
+//		builder.append("\nMy photos");
+//		for (Photo photo : photos) {
+//			builder.append("\t" + photo + " ");
+//			builder.append(photo.getComments());
+//		}
+//		builder.append("\nMy videos\n");
+//		for (Video video : videos) {
+//			builder.append("\t" + video + " ");
+//			builder.append(video.getComments());
+//		}
+		builder.append("\nMy items");
+		for (UploadableFeature item : uploadableFeatures) {
+			builder.append("\t"+item+" ");
+			builder.append(item.getComments());
 		}
 		return builder.toString();
 
@@ -201,7 +210,7 @@ public class User implements IUser {
 		List<UploadableFeature> matchCity = new LinkedList<UploadableFeature>();
 		if (place != null && !place.equals("")) {
 			for (IUser user : registeredUsers) {
-				for (Photo photo : photos) {
+			for (UploadableFeature item : uploadableFeatures) {
 					if (place.equals(photo.getCity())) {
 						matchCity.add(photo);
 					}
@@ -220,18 +229,23 @@ public class User implements IUser {
 	 * @see Instagram_Project.IUser#searchWithHashtag(java.lang.String)
 	 */
 	@Override
-	public Set<IFeature> searchWithHashtag(String hashTag) {
+	public Set<UploadableFeature> searchWithHashtag(String hashTag) {
 		if (hashTag.startsWith("#")) {
-			for (Photo photo : photos) {
-				if (photo.getDescription().equals(hashTag)) {
-					hashTagged.add(photo);
+			for (UploadableFeature item : hashTagged) {
+				if (item.getDescription().equals(hashTag)) {
+					hashTagged.add(item);
 				}
 			}
-			for (Video video : videos) {
-				if (video.getDescription().equals(hashTag)) {
-					hashTagged.add(video);
-				}
-			}
+//			for (Photo photo : photos) {
+//				if (photo.getDescription().equals(hashTag)) {
+//					hashTagged.add(photo);
+//				}
+//			}
+//			for (Video video : videos) {
+//				if (video.getDescription().equals(hashTag)) {
+//					hashTagged.add(video);
+//				}
+//			}
 		}
 		return hashTagged;
 	}

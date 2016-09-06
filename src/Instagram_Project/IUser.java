@@ -14,7 +14,7 @@ public interface IUser {
 
 	List<UploadableFeature> serchForPlaces(String place) throws NoValidDataException;
 
-	Set<IFeature> searchWithHashtag(String hashTag);
+	Set<UploadableFeature> searchWithHashtag(String hashTag);
 
 	User login(String name, String password) throws NoValidDataException, NewsFeedException, UserException, InvalidUserException, InvalidPasswordException;
 

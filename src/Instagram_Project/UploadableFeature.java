@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public abstract class UploadableFeature extends Feature implements IUploadableFeature, IFeature {
 
 	private String description;
-	private static int numberOfLikes;
+	private int numberOfLikes;
 	private User owner;
 	private String city;
 	private boolean isLiked;
@@ -64,8 +64,8 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	@Override
 	public int like(UploadableFeature feature) throws NoValidDataException {
 		if (feature != null) {
-			UploadableFeature.numberOfLikes += 1;
-			System.out.println(" Number of Likes : " + UploadableFeature.numberOfLikes);
+			this.numberOfLikes += 1;
+			System.out.println(" Number of Likes : " + this.numberOfLikes);
 			isLiked = true;
 
 		} else {
@@ -80,8 +80,8 @@ public abstract class UploadableFeature extends Feature implements IUploadableFe
 	public int unlike(UploadableFeature feature) throws NoValidDataException {
 		if (feature != null) {
 			if (isLiked == true) {
-				UploadableFeature.numberOfLikes -= 1;
-				System.out.println(" Number of Likes : " + UploadableFeature.numberOfLikes);
+				this.numberOfLikes -= 1;
+				System.out.println(" Number of Likes : " + this.numberOfLikes);
 			}
 		} else {
 			throw new NoValidDataException("Please, choose a valid feature to unlike");

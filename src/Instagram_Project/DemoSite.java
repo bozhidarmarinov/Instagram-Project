@@ -24,14 +24,15 @@ public class DemoSite {
 			profile4.registerUser();
 
 		} catch (NoValidDataException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
+			//ask Niki
+			profile1.login("georgi", "123");
 			profile1.login("georgi", "123");
 			profile2.login("georgi", "123");
 
-		} catch (UserException | InvalidUserException | InvalidPasswordException e) {
+		} catch (UserException | InvalidUserException | InvalidPasswordException |NoValidDataException e) {
 			System.out.println(e.getMessage());
 		}
 
